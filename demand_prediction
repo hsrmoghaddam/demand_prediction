@@ -13,8 +13,8 @@ from sklearn.metrics import mean_squared_error
 
 
 # Importing customer data 
-CUSTOMER_DATASET = 'C:/Users/hamze/Desktop/Internship/Felyx/Data Scientist/Assessment/reservationdata.csv'
-WEATHER_DATASET = 'C:/Users/hamze/Desktop/Internship/Felyx/Data Scientist/Assessment/weatherdata.csv'
+CUSTOMER_DATASET = 'ADDRESS'
+WEATHER_DATASET = 'ADDRESS'
 
 df = pd.read_csv(CUSTOMER_DATASET)
 df_weather_data = pd.read_csv(WEATHER_DATASET)
