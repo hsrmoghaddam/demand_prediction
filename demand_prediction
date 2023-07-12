@@ -13,8 +13,8 @@ from sklearn.metrics import mean_squared_error
 
 
 # Importing customer data 
-CUSTOMER_DATASET = 'ADDRESS'
-WEATHER_DATASET = 'ADDRESS'
+CUSTOMER_DATASET = 'DATA ADDRESS'
+WEATHER_DATASET = 'DATA ADDRESS'
 
 df = pd.read_csv(CUSTOMER_DATASET)
 df_weather_data = pd.read_csv(WEATHER_DATASET)
@@ -39,7 +39,7 @@ df_weather_data['Date'] = pd.to_datetime(df_weather_data['Date'])
 # Sort based on the reservation start time
 df = df.sort_values('reservation_start_time')
 df = df.reset_index()
-# Getting only reservation start time date to extract wather feature. 
+# Getting only reservation start time date to extract weather  feature. 
 df['start_date'] = pd.to_datetime(df['reservation_start_time']).dt.date
 df_weather_data['Date'] = pd.to_datetime(df_weather_data['Date']).dt.date
 # # Extracting hour of the day
@@ -60,8 +60,8 @@ df10 = df.loc[df['location_id'] == 10]
 
 
 def create_dataset (df_reservation, df_weather):
-    # This function get reservation and weather data and create a dataset that contains hourly demand, average trip distance, average travel time, average price, weather features, hour of the day and day of the week. 
-    # Changing the reservation start times to its floor to help calculating hourly demand.
+    # This function gets reservation and weather data and creates a dataset that contains hourly demand, average trip distance, average travel time, average price, weather features, the hour of the day, and the day of the week.
+    # Changing the reservation start times to its floor to help calculate hourly demand.
     df_reservation['reservation_start_time'] =  pd.to_datetime(df_reservation['reservation_start_time']).dt.floor(freq='H')
     
     # Make a new data frame and calculate the aggregate hourly demand
@@ -79,7 +79,7 @@ def create_dataset (df_reservation, df_weather):
     # Extracting day of the week
     df_reservation_new['day_of_week'] = df_reservation_new.index.dayofweek
     
-    # Extracting weather data from weather data set.
+    # Extracting weather data from the weather data set.
     descriptions = []
     max_temps = []
     heat_indexes = []
@@ -92,14 +92,14 @@ def create_dataset (df_reservation, df_weather):
         heat_index = df_weather.iloc[weather_date_index][3]
         wind_gust_speed = df_weather.iloc[weather_date_index][4]
         precipitation = df_weather.iloc[weather_date_index][5]
-        # Adding all the extracted weather features to lists to be added to data frame later.
+        # Adding all the extracted weather features to lists to be added to the data frame later.
         descriptions = descriptions + df_reservation_new['start_date'].value_counts()[date] * [description]
         max_temps = max_temps + df_reservation_new['start_date'].value_counts()[date] * [max_temp]
         heat_indexes = heat_indexes + df_reservation_new['start_date'].value_counts()[date] * [heat_index]
         wind_gust_speeds = wind_gust_speeds + df_reservation_new['start_date'].value_counts()[date] * [wind_gust_speed]
         precipitations = precipitations + df_reservation_new['start_date'].value_counts()[date] * [precipitation]
     
-    # Adding the list of extreacted weather features to the data frame.
+    # Adding the list of extracted  weather features to the data frame.
     df_reservation_new['description'] = descriptions
     df_reservation_new['max_temp'] = max_temps
     df_reservation_new['heat_index'] = heat_indexes
@@ -112,14 +112,14 @@ def create_dataset (df_reservation, df_weather):
 
 def transform(df):
     # A function to transform variables
-    # Transforming hour of day to xhr and yhr to consider hours circularity
+    # Transforming the hour of day to xhr and yhr to consider hours circularity
     df["xhr"] = df["hour_of_day"].apply(lambda x: math.sin(2*math.pi*x/24))
     
     df["yhr"] = df["hour_of_day"].apply(lambda x: math.cos(2*math.pi*x/24))
     
     df.drop(columns = ['hour_of_day'], inplace = True)
     
-    # Transforming day of the week and weather description to dummy variables
+    # Transforming the day of the week and weather description to dummy variables
     df = pd.get_dummies(df, columns=["day_of_week", "description"], prefix=["day",""])
     return df
 
@@ -135,7 +135,7 @@ plt.show()
 # Transform dataset by using transform function
 df11_new = transform(df11_new)
 
-# split data into input and output columns
+# Split data into input and output columns
 X, y = df11_new.iloc[:, 1:], df11_new.iloc[:, 0]
 
 # define model
@@ -162,7 +162,7 @@ missing_intervals = time_range[~time_range.isin(df11_ts.index)]
 
 df11_ts = df11_ts.reindex(time_range)
 
-# Extracting hour of day and day of week for all data pionts included missing ones
+# Extracting hour of day and day of week for all data points including missing ones
 df11_ts['hour_of_day'] = df11_ts.index.hour
 df11_ts['day_of_week'] = df11_ts.index.dayofweek
 # Fill missing demand values using forward fill
@@ -195,7 +195,7 @@ y_pred = model_ts.predict(X_test)
 rmse = mean_squared_error(y_test, y_pred)
 print(('---------- MSE ts: %.3f ----------' % (rmse )))
 
-# Evaluating features importance
+# Evaluating feature's importance
 feature_importance = model_ts.feature_importances_
 sorted_idx = np.argsort(feature_importance)
 pos = np.arange(sorted_idx.shape[0]) + 10
@@ -206,8 +206,8 @@ plt.yticks(pos, df11_ts.columns[1:][sorted_idx], fontsize=8)
 plt.title("Feature Importance")
 
 
-# In the next step one could find geographic service area and divide them into smaller areas using grids. These grids could be used to assign trips that fall between grids to clusters. These clusters could be used to predict demand at smaller area and also it is possible to extract more features to train models.
-# Finding the extereme coordinates to find the coverage area dimensions
+# In the next step one could find geographic service areas and divide them into smaller areas using grids. These grids could be used to assign trips that fall between grids to clusters. These clusters could be used to predict demand in smaller areas and also it is possible to extract more features to train models.
+# Finding the extreme coordinates to find the coverage area dimensions
 min_start_longitude_11 =  df11['start_longitude'].min()
 max_start_longitude_11 =  df11['start_longitude'].max()
 min_start_latitude_11 =  df11['start_latitude'].min()
@@ -271,7 +271,7 @@ grids_lat_11 = np.linspace(min_lat_11, max_lat_11, num=5+1)
 # Here I am using 5 to 5 grids and making an array with this shape for cluster names. 
 cluster_ids = np.arange(1,26).reshape(5,5)
 
-# Making a list to add trips cluster ids to it. 
+# Make a list to add trip cluster ids to it.
 origin_cluster_ids = []
 destination_cluster_ids = []
 
