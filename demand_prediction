@@ -42,14 +42,8 @@ df = df.reset_index()
 # Getting only reservation start time date to extract weather  feature. 
 df['start_date'] = pd.to_datetime(df['reservation_start_time']).dt.date
 df_weather_data['Date'] = pd.to_datetime(df_weather_data['Date']).dt.date
-# # Extracting hour of the day
-# df['hour_of_day'] = pd.to_datetime(df['reservation_start_time']).dt.hour
-# # Extracting day of the week
-# df['day_of_week'] = pd.to_datetime(df['reservation_start_time']).dt.dayofweek
 # Making a list of start time unique dates
 unique_dates = df['start_date'].unique()
-# # Making a list of start time unique times
-# unique_dates = df['start_date'].unique()
 # Making a list of locations
 unique_locations = df['location_id'].unique()
 
